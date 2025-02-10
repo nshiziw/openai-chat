@@ -1,15 +1,17 @@
 require("dotenv").config();
 const express = require("express");
 const cors = require("cors");
-const OpenAI = require("openai");
-
+const { GoogleGenerativeAI } = require("@google/generative-ai");
 
 const app = express();
 const port = process.env.PORT || 5000;
-const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
 
 app.use(cors());
 app.use(express.json());
+
+
+const genAI = new GoogleGenerativeAI("AIzaSyBjJdfMq3MiHWFfB1xi1DPUQT-F0VXFH24");
+const model = genAI.getGenerativeModel({ model: "gemini-2.0-flash" });
 
 // API Route for OpenAI
 app.post("/api/process", async (req, res) => {
@@ -19,13 +21,12 @@ app.post("/api/process", async (req, res) => {
             return res.status(400).json({ error: "Prompt is required" });
         }
 
-        const response = await openai.completions.create({
-            model: "gpt-3.5-turbo",
-            prompt: prompt,
-            max_tokens: 400,
-        });
-
-        res.json({ response: response.choices[0].text.trim() });
+        const result = await model.generateContent(prompt);
+        console.log(result.response.text());
+        res.status(200).json({
+            "success": true,
+            "Message": result.response.text()
+        })
     } catch (error) {
         console.error(error);
         res.status(500).json({ error: "Error processing request" });
