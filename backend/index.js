@@ -22,7 +22,6 @@ app.post("/api/process", async (req, res) => {
         }
 
         const result = await model.generateContent(prompt);
-        console.log(result.response.text());
         res.status(200).json({
             "success": true,
             "Message": result.response.text()

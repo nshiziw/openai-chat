@@ -5,14 +5,24 @@ import { useState, useRef, useEffect, useCallback } from "react";
 import { Button } from "@/components/ui/button";
 // import { Input } from "@/components/ui/input";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import { toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+import axios from "axios";
 
 export default function ChatUI({ title }) {
   const [messages, setMessages] = useState([]);
   const [inputValue, setInputValue] = useState("");
   const scrollAreaRef = useRef(null);
+  const API_URL = "http://localhost:5000/api/process";
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
+    // check if input is empty
+    if (!inputValue.trim()) {
+      toast.error("Prompt is required");
+      return;
+    }
+
     if (inputValue.trim()) {
       const newMessage = {
         id: Date.now(),
@@ -21,15 +31,22 @@ export default function ChatUI({ title }) {
       };
       setMessages([...messages, newMessage]);
       setInputValue("");
-      // Simulate a received message
-      setTimeout(() => {
+      try {
+        const sendMessage = await axios.post(API_URL, { prompt: inputValue }, {
+          headers: {
+            "Content-Type": "application/json",
+          },
+        });
         const receivedMessage = {
           id: Date.now(),
-          text: "Thanks for your message!",
+          text: sendMessage.data.Message,
           isSent: false,
         };
         setMessages((prevMessages) => [...prevMessages, receivedMessage]);
-      }, 1000);
+      } catch (err) {
+        console.error("Error sending message", err);
+        toast.error("Failed to send message");
+      }
     }
   };
 
@@ -82,10 +99,10 @@ export default function ChatUI({ title }) {
         <form onSubmit={handleSubmit} className="flex space-x-2">
           <input
             type="text"
-            placeholder="Type your message here..."
+            placeholder="Type your prompt here..."
             value={inputValue}
             onChange={(e) => setInputValue(e.target.value)}
-            className="w-full focus:ring focus:ring-sky-300 border rounded-md px-2 border-sky-600"
+            className="w-full focus:ring focus:ring-sky-400 border rounded-md transition-all duration-300 px-2 border-sky-400"
           />
           <Button className="bg-sky-600 hover:bg-sky-400 transition-all duration-500" type="submit">Send Prompt</Button>
         </form>
