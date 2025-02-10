@@ -9,6 +9,7 @@ import "react-toastify/dist/ReactToastify.css";
 export default function ChatUI({ title }) {
   const [messages, setMessages] = useState([]);
   const [inputValue, setInputValue] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
   const scrollAreaRef = useRef(null);
   const API_URL = "http://localhost:5000/api/process";
   const inputRef = useRef(null);
@@ -26,6 +27,7 @@ export default function ChatUI({ title }) {
       toast.error("Prompt is required");
       return;
     }
+    setIsLoading(true);
 
     if (inputValue.trim()) {
       const newMessage = {
@@ -50,6 +52,8 @@ export default function ChatUI({ title }) {
       } catch (err) {
         console.error("Error sending message", err);
         toast.error("Failed to send message");
+      } finally {
+        setIsLoading(false);
       }
     }
   };
@@ -110,7 +114,8 @@ export default function ChatUI({ title }) {
             className="w-full text-sm py-2 font-light bg-transparent text-[#eeeeee] focus:ring-1 focus:ring-[#212121] border rounded-md transition-all duration-300 px-2 border-none"
           />
           <button
-            className="text-2xl group text-white bg-transparent transition-all duration-500"
+            disabled={isLoading}
+            className={`text-2xl group text-white bg-transparent transition-all duration-500 ${isLoading ? "opacity-40 cursor-not-allowed" : ""}`}
             type="submit"
           >
             <IoIosSend className="text-3xl group-hover:scale-125 group-hover:text-gray-400 transition-all duration-300" />
