@@ -80,7 +80,7 @@ export default function ChatUI({ title }) {
                 }`}
               >
                 <div
-                  className={`max-w-[70%] rounded-lg p-3 ${
+                  className={`max-w-[70%]  rounded-3xl font-light py-3 px-5 ${
                     message.isSent
                       ? "bg-blue-500 text-white"
                       : "bg-sky-100 shadow text-sky-700"
@@ -102,7 +102,7 @@ export default function ChatUI({ title }) {
             placeholder="Type your prompt here..."
             value={inputValue}
             onChange={(e) => setInputValue(e.target.value)}
-            className="w-full focus:ring focus:ring-sky-400 border rounded-md transition-all duration-300 px-2 border-sky-400"
+            className="w-full text-sm font-light focus:ring focus:ring-sky-400 border rounded-md transition-all duration-300 px-2 border-sky-400"
           />
           <Button className="bg-sky-600 hover:bg-sky-400 transition-all duration-500" type="submit">Send Prompt</Button>
         </form>

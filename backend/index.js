@@ -13,6 +13,14 @@ app.use(express.json());
 const genAI = new GoogleGenerativeAI("AIzaSyBjJdfMq3MiHWFfB1xi1DPUQT-F0VXFH24");
 const model = genAI.getGenerativeModel({ model: "gemini-2.0-flash" });
 
+
+app.get("/", (req, res) => {
+    res.status(200).json({
+        "success": true,
+        "Message": "Welcome to the text processing API!"
+    });
+})
+
 // API Route for OpenAI
 app.post("/api/process", async (req, res) => {
     try {
