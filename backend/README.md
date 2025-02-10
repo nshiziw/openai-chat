@@ -18,12 +18,16 @@ This is a **Node.js** and **Express** backend API that processes text prompts us
 ```bash
 git clone https://github.com/nshiziw/text-processor
 cd backend
+```
 
 ### 2️⃣ **Install Dependencies**
 
 ```bash
 npm install
+```
 
 ### 3️⃣ Run the server
+
 ```bash
 npm start
+```
