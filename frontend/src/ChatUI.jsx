@@ -1,5 +1,5 @@
 /* eslint-disable react/prop-types */
-import { useState, useRef, useEffect, useCallback } from "react";
+import { useState, useRef, useEffect } from "react";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import axios from "axios";
 import { IoIosSend } from "react-icons/io";
@@ -11,63 +11,105 @@ export default function ChatUI({ title }) {
   const [inputValue, setInputValue] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const scrollAreaRef = useRef(null);
+  const lastMessageRef = useRef(null); // 👈 Reference the last message directly
   const API_URL = "http://localhost:5000/api/process";
   const inputRef = useRef(null);
+  const [isInputEmpty, setIsInputEmpty] = useState(false);
 
   useEffect(() => {
     if (inputRef.current) {
       inputRef.current.focus();
     }
-  }, [])
+  }, []);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    // check if input is empty
+
+    // Check if input is empty
+
     if (!inputValue.trim()) {
-      toast.error("Prompt is required");
+      setIsInputEmpty(true);
+      setTimeout(() => {
+        setIsInputEmpty(false);
+      }, 5000)
       return;
     }
+    setIsInputEmpty(false);
+
     setIsLoading(true);
 
-    if (inputValue.trim()) {
-      const newMessage = {
-        id: Date.now(),
-        text: inputValue,
-        isSent: true,
-      };
-      setMessages([...messages, newMessage]);
-      setInputValue("");
-      try {
-        const sendMessage = await axios.post(API_URL, { prompt: inputValue }, {
+    // Generate unique ID for the user message
+    const userMessageId = Date.now();
+
+    // Create user message
+    const newMessage = {
+      id: userMessageId,
+      text: inputValue,
+      isSent: true,
+    };
+
+    // Create loading message
+    const loadingMessage = {
+      id: userMessageId + 1, // Ensure unique ID
+      text: "Loading...",
+      isSent: false,
+    };
+
+    // Add both messages in one state update
+    setMessages((prevMessages) => [
+      ...prevMessages,
+      newMessage,
+      loadingMessage,
+    ]);
+    setInputValue(""); // Clear input after sending
+
+    try {
+      const sendMessage = await axios.post(
+        API_URL,
+        { prompt: inputValue },
+        {
           headers: {
             "Content-Type": "application/json",
           },
-        });
-        const receivedMessage = {
-          id: Date.now(),
-          text: sendMessage.data.Message,
-          isSent: false,
-        };
-        setMessages((prevMessages) => [...prevMessages, receivedMessage]);
-      } catch (err) {
-        console.error("Error sending message", err);
-        toast.error("Failed to send message");
-      } finally {
-        setIsLoading(false);
-      }
+        }
+      );
+
+      // Update the loading message with the actual response
+      setMessages((prevMessages) =>
+        prevMessages.map((msg) =>
+          msg.id === loadingMessage.id // Ensure correct match
+            ? { ...msg, text: sendMessage.data.Message }
+            : msg
+        )
+      );
+    } catch (err) {
+      console.error("Error sending message", err);
+      toast.error("Failed to send message");
+
+      // Update the loading message with an error message
+      setMessages((prevMessages) =>
+        prevMessages.map((msg) =>
+          msg.id === loadingMessage.id
+            ? { ...msg, text: "Failed to load response" }
+            : msg
+        )
+      );
+    } finally {
+      setIsLoading(false);
     }
   };
 
-  const scrollToBottom = useCallback(() => {
-    if (scrollAreaRef.current) {
-      const lastMessage = scrollAreaRef.current.lastElementChild;
-      lastMessage?.scrollIntoView({ behavior: "smooth" });
-    }
-  }, []);
+  // Function to scroll to the last message
+  const scrollToBottom = () => {
+    setTimeout(() => {
+      lastMessageRef.current?.scrollIntoView({ behavior: "smooth" });
+    }, 100); // Small delay to ensure the new message is rendered
+  };
 
+  // Scroll to bottom when messages update
   useEffect(() => {
     scrollToBottom();
-  }, [scrollToBottom]);
+  }, [messages]); // 👈 Scroll when messages change
 
   return (
     <div className="flex flex-col h-screen bg-[#212121] gap-2">
@@ -80,9 +122,10 @@ export default function ChatUI({ title }) {
       <ScrollArea className="flex-grow p-4 bg-[#212121] rounded-lg">
         <div ref={scrollAreaRef}>
           <div className="space-y-4">
-            {messages.map((message) => (
+            {messages.map((message, index) => (
               <div
                 key={message.id}
+                ref={index === messages.length - 1 ? lastMessageRef : null}
                 className={`flex ${
                   message.isSent ? "justify-end" : "justify-start"
                 }`}
@@ -104,7 +147,7 @@ export default function ChatUI({ title }) {
 
       {/* Input Section */}
       <div className="bg-[#303030] p-4 rounded-t-lg">
-        <form onSubmit={handleSubmit} className="flex space-x-2">
+        <form onSubmit={handleSubmit} className="flex space-x-2 relative">
           <input
             ref={inputRef}
             type="text"
@@ -113,9 +156,14 @@ export default function ChatUI({ title }) {
             onChange={(e) => setInputValue(e.target.value)}
             className="w-full text-sm py-2 font-light bg-transparent text-[#eeeeee] focus:ring-1 focus:ring-[#212121] border rounded-md transition-all duration-300 px-2 border-none"
           />
+          {isInputEmpty && (
+            <p className="absolute right-0 -top-10 text-rose-400 text-sm">Prompt can&apos;t be empty</p>
+          )}
           <button
             disabled={isLoading}
-            className={`text-2xl group text-white bg-transparent transition-all duration-500 ${isLoading ? "opacity-40 cursor-not-allowed" : ""}`}
+            className={`text-2xl group text-white bg-transparent transition-all duration-500 ${
+              isLoading ? "opacity-40 cursor-not-allowed" : ""
+            }`}
             type="submit"
           >
             <IoIosSend className="text-3xl group-hover:scale-125 group-hover:text-gray-400 transition-all duration-300" />
