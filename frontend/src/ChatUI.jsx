@@ -1,11 +1,12 @@
+/* eslint-disable react/prop-types */
 "use client";
 
 import { useState, useRef, useEffect, useCallback } from "react";
-import { Button } from "./components/ui/button.jsx";
-import { Input } from "./components/ui/input.jsx";
-import { ScrollArea } from "./components/ui/scroll-area.jsx";
+import { Button } from "@/components/ui/button";
+// import { Input } from "@/components/ui/input";
+import { ScrollArea } from "@/components/ui/scroll-area";
 
-export default function ChatUI() {
+export default function ChatUI({ title }) {
   const [messages, setMessages] = useState([]);
   const [inputValue, setInputValue] = useState("");
   const scrollAreaRef = useRef(null);
@@ -45,6 +46,12 @@ export default function ChatUI() {
 
   return (
     <div className="flex flex-col h-screen bg-gray-100">
+      {/* Title Section */}
+      <div className="bg-white border-b border-gray-200 p-4 shadow-sm">
+        <h1 className="text-2xl font-bold text-center text-sky-800">{title}</h1>
+      </div>
+
+      {/* Chat Messages */}
       <ScrollArea className="flex-grow p-4">
         <div ref={scrollAreaRef}>
           <div className="space-y-4">
@@ -59,7 +66,7 @@ export default function ChatUI() {
                   className={`max-w-[70%] rounded-lg p-3 ${
                     message.isSent
                       ? "bg-blue-500 text-white"
-                      : "bg-white text-gray-800"
+                      : "bg-sky-100 shadow text-sky-700"
                   }`}
                 >
                   {message.text}
@@ -69,16 +76,18 @@ export default function ChatUI() {
           </div>
         </div>
       </ScrollArea>
+
+      {/* Input Section */}
       <div className="bg-white border-t border-gray-200 p-4">
         <form onSubmit={handleSubmit} className="flex space-x-2">
-          <Input
+          <input
             type="text"
-            placeholder="Type a message..."
+            placeholder="Type your message here..."
             value={inputValue}
             onChange={(e) => setInputValue(e.target.value)}
-            className="flex-grow"
+            className="w-full focus:ring focus:ring-sky-300 border rounded-md px-2 border-sky-600"
           />
-          <Button type="submit">Send</Button>
+          <Button className="bg-sky-600 hover:bg-sky-400 transition-all duration-500" type="submit">Send Prompt</Button>
         </form>
       </div>
     </div>

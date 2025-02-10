@@ -2,7 +2,7 @@ import ChatUI from "./ChatUI"
 const App = () => {
   return (
     <div>
-      <ChatUI />
+      <ChatUI title="AI Text Processor" />
     </div>
   )
 }
