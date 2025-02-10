@@ -12,3 +12,9 @@
   outline: none;
   user-select: none;
 }
+
+@layer base {
+  :root {
+    --radius: 0.5rem;
+  }
+}
