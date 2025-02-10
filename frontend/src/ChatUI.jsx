@@ -12,7 +12,7 @@ export default function ChatUI({ title }) {
   const [isLoading, setIsLoading] = useState(false);
   const scrollAreaRef = useRef(null);
   const lastMessageRef = useRef(null); // 👈 Reference the last message directly
-  const API_URL = "http://localhost:5000/api/process";
+  const API_URL = "https://text-processor.onrender.com/api/process";
   const inputRef = useRef(null);
   const [isInputEmpty, setIsInputEmpty] = useState(false);
 
