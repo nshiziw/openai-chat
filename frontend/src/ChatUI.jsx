@@ -1,13 +1,11 @@
 /* eslint-disable react/prop-types */
-"use client";
-
 import { useState, useRef, useEffect, useCallback } from "react";
 import { Button } from "@/components/ui/button";
-// import { Input } from "@/components/ui/input";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import axios from "axios";
+import { IoIosSend } from "react-icons/io";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import axios from "axios";
 
 export default function ChatUI({ title }) {
   const [messages, setMessages] = useState([]);
@@ -62,14 +60,14 @@ export default function ChatUI({ title }) {
   }, [scrollToBottom]);
 
   return (
-    <div className="flex flex-col h-screen bg-gray-100">
+    <div className="flex flex-col h-screen bg-gray-100 gap-2">
       {/* Title Section */}
-      <div className="bg-white border-b border-gray-200 p-4 shadow-sm">
+      <div className="bg-white border-b border-gray-200 p-4">
         <h1 className="text-2xl font-bold text-center text-sky-800">{title}</h1>
       </div>
 
       {/* Chat Messages */}
-      <ScrollArea className="flex-grow p-4">
+      <ScrollArea className="flex-grow p-4 bg-[#003554] rounded-lg">
         <div ref={scrollAreaRef}>
           <div className="space-y-4">
             {messages.map((message) => (
@@ -80,10 +78,10 @@ export default function ChatUI({ title }) {
                 }`}
               >
                 <div
-                  className={`max-w-[70%]  rounded-3xl font-light py-3 px-5 ${
+                  className={`max-w-[70%] font-light py-3 px-5 ${
                     message.isSent
-                      ? "bg-blue-500 text-white"
-                      : "bg-sky-100 shadow text-sky-700"
+                      ? "bg-transparent text-[#eeeeee]"
+                      : "bg-[#00395B] rounded-lg text-[#eeeeee]"
                   }`}
                 >
                   {message.text}
@@ -95,16 +93,21 @@ export default function ChatUI({ title }) {
       </ScrollArea>
 
       {/* Input Section */}
-      <div className="bg-white border-t border-gray-200 p-4">
+      <div className="bg-[#003554] p-4 rounded-md">
         <form onSubmit={handleSubmit} className="flex space-x-2">
           <input
             type="text"
             placeholder="Type your prompt here..."
             value={inputValue}
             onChange={(e) => setInputValue(e.target.value)}
-            className="w-full text-sm font-light focus:ring focus:ring-sky-400 border rounded-md transition-all duration-300 px-2 border-sky-400"
+            className="w-full text-sm font-light bg-transparent text-[#eeeeee] focus:ring-1 focus:ring-sky-900 border rounded-md transition-all duration-300 px-2 border-none"
           />
-          <Button className="bg-sky-600 hover:bg-sky-400 transition-all duration-500" type="submit">Send Prompt</Button>
+          <Button
+            className=" text-2xl hover:text-sky-400 bg-transparent hover:bg-sky-900 transition-all duration-500"
+            type="submit"
+          >
+            <IoIosSend className="text-2xl" />
+          </Button>
         </form>
       </div>
     </div>

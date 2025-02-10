@@ -5,8 +5,10 @@ const App = () => {
   return (
     <div>
       <ToastContainer
-      position="top-right"/>
-      <ChatUI title="AI Text Processor" />
+        position="top-right" />
+      <section className="w-screen h-screen px-[10%]">
+        <ChatUI title="AI Text Processor" />
+      </section>
     </div>
   )
 }
