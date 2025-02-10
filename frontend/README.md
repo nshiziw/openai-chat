@@ -1,8 +1,33 @@
-# React + Vite
+# 🚀 Text Processor Frontend
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+This is the frontend for the **Text Processor** application, built with **React.js** and designed to interact with the backend API.
 
-Currently, two official plugins are available:
+## 📌 Features
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+- Accepts text input and generates responses using **Gemini AI API**.
+- Uses **Express.js** for handling API requests.
+- CORS enabled for cross-origin requests.
+- Configured for **local development** and **deployment**.
+
+---
+
+## 📌 Steps to Set Up Locally
+
+### 1️⃣ Clone the Repository
+
+```bash
+git clone https://github.com/nshiziw/text-processor
+cd frontend
+```
+
+### 2️⃣ Clone the Repository
+
+```bash
+npm install
+```
+
+### 3️⃣ Run the development Server
+
+```bash
+npm run dev
+```
